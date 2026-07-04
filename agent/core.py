@@ -1,7 +1,7 @@
 """Core AI agent — builds the LangChain ReAct AgentExecutor."""
 from langchain_groq import ChatGroq
-from langchain.agents import create_react_agent, AgentExecutor
-from langchain.prompts import PromptTemplate
+from langchain_classic.agents import create_react_agent, AgentExecutor
+from langchain_core.prompts import PromptTemplate
 
 from .tools import get_all_tools
 

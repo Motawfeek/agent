@@ -1,6 +1,6 @@
 """Weather tool using the free wttr.in API (no API key required)."""
 import requests
-from langchain.tools import Tool
+from langchain_core.tools import Tool
 
 
 def get_weather(city: str) -> str:

@@ -1,6 +1,6 @@
 """Web search tool using DuckDuckGo (no API key required)."""
 from langchain_community.tools import DuckDuckGoSearchRun
-from langchain.tools import Tool
+from langchain_core.tools import Tool
 
 _ddg = DuckDuckGoSearchRun()
 

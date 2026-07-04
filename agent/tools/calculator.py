@@ -1,6 +1,6 @@
 """Safe calculator tool for mathematical operations."""
 import math
-from langchain.tools import Tool
+from langchain_core.tools import Tool
 
 
 def safe_calculate(expression: str) -> str:

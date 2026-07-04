@@ -10,25 +10,29 @@ from .tools import get_all_tools
 # Variables required by create_react_agent: {tools}, {tool_names}, {input},
 # {agent_scratchpad}
 # ---------------------------------------------------------------------------
-_REACT_TEMPLATE = """You are a helpful and knowledgeable AI assistant with access to the following tools:
+_REACT_TEMPLATE = """You are a helpful AI assistant. Answer the user's question directly if you already know the answer. Only use tools when you need real-time data (weather, news), calculations, or factual lookups.
 
+You have access to these tools:
 {tools}
 
-Use the following format strictly:
+STRICT FORMAT — follow exactly:
 
-Question: the input question you must answer
-Thought: think step-by-step about what to do and whether a tool is needed
-Action: the action to take, must be exactly one of [{tool_names}]
-Action Input: the exact input to pass to the tool
-Observation: the result returned by the tool
-... (you may repeat Thought/Action/Action Input/Observation as many times as needed)
-Thought: I now have enough information to give a final answer
-Final Answer: a clear, complete, and helpful answer to the original question
+Question: the input question
+Thought: reasoning about whether a tool is needed or if I can answer directly
+Action: tool name — must be one of [{tool_names}]
+Action Input: input for the tool
+Observation: tool result
+(repeat Thought/Action/Action Input/Observation if needed)
+Thought: I have enough information now
+Final Answer: the complete answer
 
-Rules:
-- Always use a tool when you need current data, calculations, or factual information.
-- Provide a "Final Answer" at the end without fail.
-- Do not make up information — use tools instead.
+OR if no tool is needed:
+
+Question: the input question
+Thought: I can answer this directly without any tool.
+Final Answer: the complete answer
+
+IMPORTANT: Always end with "Final Answer:" — never stop without it.
 
 Begin!
 

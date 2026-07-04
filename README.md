@@ -1,212 +1,152 @@
-<div align="center">
+﻿<div align="center">
 
-# 🤖 Multi-Tool AI Agent
+# Multi-Tool AI Agent
 
-**A production-ready AI agent powered by Groq ⚡ and LangChain**
+**LangChain · Groq · Streamlit — 7 tools, zero paid APIs**
 
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![LangChain](https://img.shields.io/badge/LangChain-0.2+-1C3C3C?style=for-the-badge&logo=chainlink&logoColor=white)](https://langchain.com)
-[![Groq](https://img.shields.io/badge/Groq-Llama3_70B-F55036?style=for-the-badge&logo=groq&logoColor=white)](https://groq.com)
-[![Streamlit](https://img.shields.io/badge/Streamlit-Web_UI-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
-[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-
-[Features](#-features) · [Quick Start](#-quick-start) · [Architecture](#-architecture) · [Examples](#-example-queries)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![LangChain](https://img.shields.io/badge/LangChain-1.x-1C3C3C?style=flat-square)](https://langchain.com)
+[![Groq](https://img.shields.io/badge/Groq-Llama_3.3_70B-F55036?style=flat-square)](https://groq.com)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.58-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io)
+[![License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](LICENSE)
 
 </div>
 
 ---
 
-## 🌟 Overview
+## What is this?
 
-A fully-functional, multi-tool AI agent built with **LangChain** and **Groq's ultra-fast LLM inference** (Llama 3 70B). The agent uses the **ReAct (Reasoning + Acting)** framework to intelligently decide *which tool to use* and *how many steps* it needs to answer any question accurately.
+An AI agent that uses the **ReAct (Reasoning + Acting)** framework to answer questions by calling
+the right tool at the right time — web search, calculations, live weather, currency conversions,
+and even executing Python code — all in one chat interface.
 
-Ships with both a **beautiful Streamlit web interface** and a **terminal CLI** — ready to deploy or extend.
-
----
-
-## ✨ Features
-
-| Capability | Description |
-|------------|-------------|
-| 🔍 **Web Search** | Real-time internet search via DuckDuckGo — no API key needed |
-| 🧮 **Calculator** | Safe math evaluation with `sqrt`, `sin`, `log`, `factorial`, and more |
-| 🌤️ **Weather** | Live weather data for any city worldwide (temperature, humidity, wind) |
-| 📖 **Wikipedia** | Instant access to a vast factual knowledge base |
-| ⚡ **Groq Inference** | Up to 800 tokens/sec with Llama 3 70B, Mixtral, or Gemma 2 |
-| 🧠 **ReAct Agent** | Multi-step reasoning with transparent tool selection |
-| 💬 **Streamlit UI** | Chat interface with collapsible reasoning trace |
-| 🖥️ **CLI Mode** | Terminal interface for quick, scriptable interactions |
+I built it to understand how LLM agents actually *think* and *act*, not just generate text.
+The result turned out useful enough that I turned it into a full project.
 
 ---
 
-## 🏗️ Architecture
+## Tools (7)
+
+| Tool | What it does | API Key? |
+|------|-------------|---------|
+| 🔍 `web_search` | Live DuckDuckGo search | No |
+| 🧮 `calculator` | Math — `sqrt`, `sin`, `log`, `factorial`… | No |
+| 🌤️ `weather` | Real-time conditions for any city | No |
+| 📖 `wikipedia` | Facts, history, science | No |
+| 🕐 `datetime` | Current date & time in any timezone | No |
+| 💱 `currency` | Live exchange rates — 170+ currencies incl. EGP, SAR, AED | No |
+| 🐍 `python_repl` | Safe Python sandbox — runs code, returns output | No |
+
+All 7 tools are **completely free** — no API keys, no credit cards.
+
+---
+
+## How the agent thinks
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    User Interfaces                       │
-│         Streamlit Web App (app.py) │ CLI (main.py)      │
-└──────────────────────┬──────────────────────────────────┘
-                       │ question
-┌──────────────────────▼──────────────────────────────────┐
-│             LangChain ReAct AgentExecutor                │
-│         Reason → Act → Observe → Repeat → Answer        │
-└────┬──────────┬──────────────┬──────────────┬───────────┘
-     │          │              │              │
-┌────▼───┐ ┌───▼──────┐ ┌────▼──────┐ ┌────▼──────┐
-│  Web   │ │Calculator│ │  Weather  │ │ Wikipedia │
-│ Search │ │  (math)  │ │ (wttr.in) │ │  (facts)  │
-└────────┘ └──────────┘ └───────────┘ └───────────┘
-                       │ LLM calls
-┌──────────────────────▼──────────────────────────────────┐
-│               Groq — Ultra-Fast Inference ⚡             │
-│    Llama 3 70B │ Llama 3 8B │ Mixtral 8x7B │ Gemma 2   │
-└─────────────────────────────────────────────────────────┘
+User: "What's 1000 SAR in EGP, and what time is it in Riyadh?"
+
+Agent thought process:
+  Thought → I need currency rates AND time for two different things
+  Action  → currency("1000 SAR to EGP")
+  Observe → 1000 SAR = 10,847 EGP
+  Action  → datetime("Riyadh")
+  Observe → Sunday, 05 July 2026 at 12:53 AM (UTC+03:00)
+  Thought → I have everything I need
+  Answer  → "1000 SAR equals approximately 10,847 EGP.
+              It is currently 12:53 AM in Riyadh (UTC+03:00)."
 ```
+
+Every step is visible in the **"خطوات التفكير"** expander in the UI.
 
 ---
 
-## 🚀 Quick Start
+## Quick start
 
-### 1. Clone the repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/multi-tool-ai-agent.git
+git clone https://github.com/Motawfeek/multi-tool-ai-agent.git
 cd multi-tool-ai-agent
-```
-
-### 2. Install dependencies
-```bash
 pip install -r requirements.txt
-```
-
-### 3. Configure your API key
-```bash
-cp .env.example .env
-# Open .env and paste your Groq API key
-```
-
-### 4. Launch the web UI
-```bash
+cp .env.example .env        # add your free Groq key
 streamlit run app.py
 ```
 
-Or use the CLI directly:
-```bash
-python main.py
-```
-
-> **Get a free Groq API key** at [console.groq.com](https://console.groq.com) — no credit card required.
+Get a free Groq key at [console.groq.com](https://console.groq.com) — takes 30 seconds.
 
 ---
 
-## 💡 Example Queries
+## Project structure
 
 ```
-🔍  "What are the latest developments in AI this week?"
-🌤️  "What's the weather in Cairo and should I take an umbrella?"
-🧮  "What is the compound interest on $5,000 at 7% for 15 years?"
-📖  "Explain quantum computing in simple terms"
-🌐  "Search for the top 5 Python libraries for machine learning"
-🔀  "What is the weather in London and convert 22°C to Fahrenheit?"
-```
-
----
-
-## 📁 Project Structure
-
-```
-multi-tool-ai-agent/
-│
-├── app.py                  # 🌐 Streamlit web interface
-├── main.py                 # 🖥️  CLI interface
-├── requirements.txt        # 📦 Python dependencies
-├── .env.example            # 🔑 Environment variable template
+agent/
+├── app.py                    # Streamlit UI (stats, export, quick actions)
+├── main.py                   # CLI interface
 │
 ├── agent/
-│   ├── __init__.py
-│   ├── core.py             # 🧠 AgentExecutor setup (ReAct + Groq)
+│   ├── core.py               # AgentExecutor with adjustable temperature & steps
 │   └── tools/
-│       ├── __init__.py
-│       ├── search.py       # 🔍 DuckDuckGo web search
-│       ├── calculator.py   # 🧮 Safe math evaluator
-│       ├── weather.py      # 🌤️  wttr.in weather API
-│       └── wikipedia_tool.py  # 📖 Wikipedia lookups
+│       ├── search.py         # DuckDuckGo
+│       ├── calculator.py     # Safe math eval
+│       ├── weather.py        # wttr.in
+│       ├── wikipedia_tool.py # Wikipedia API
+│       ├── datetime_tool.py  # zoneinfo-based datetime
+│       ├── currency_tool.py  # fawazahmed0 currency API
+│       └── code_tool.py      # Python sandbox
 │
-└── config/
-    ├── __init__.py
-    └── settings.py         # ⚙️  Model list & constants
+└── config/settings.py        # Models list, defaults
 ```
 
 ---
 
-## 🧠 How ReAct Works
+## UI features
 
-The agent follows a **Reasoning + Acting** loop:
-
-```
-User question
-     ↓
-[Thought]  → "I need to search the web for current information"
-[Action]   → web_search("...")
-[Observe]  → "<search results>"
-[Thought]  → "Now I can calculate the answer"
-[Action]   → calculator("...")
-[Observe]  → "result"
-[Thought]  → "I have everything I need"
-[Final Answer] → Clear, complete response
-```
-
-Every reasoning step is visible in the **"Agent reasoning steps"** expander in the web UI.
+- **4 quick-action buttons** — one click to try weather, currency, news, or code
+- **Session stats** — question count, tool calls, most-used tool
+- **Reasoning trace** — expand to see every step the agent took
+- **Export chat** — download the full conversation as `.txt`
+- **Adjustable creativity** — slider from 0 (precise) to 1 (creative)
+- **Model switcher** — Llama 3.3 70B, 8B, Mixtral, Gemma 2
 
 ---
 
-## 📊 Model Comparison
-
-| Model | Speed | Context Window | Best For |
-|-------|-------|---------------|----------|
-| `llama3-70b-8192` | ⚡⚡⚡ | 8K tokens | Best quality (recommended) |
-| `llama3-8b-8192` | ⚡⚡⚡⚡ | 8K tokens | Fastest responses |
-| `mixtral-8x7b-32768` | ⚡⚡⚡ | 32K tokens | Long context tasks |
-| `gemma2-9b-it` | ⚡⚡⚡ | 8K tokens | Balanced performance |
-
----
-
-## 🛠️ Tech Stack
+## Stack
 
 | Layer | Technology |
 |-------|-----------|
-| LLM Inference | [Groq](https://groq.com) — world's fastest AI inference |
-| Agent Framework | [LangChain](https://langchain.com) ReAct agent |
-| Language Model | [Llama 3 70B](https://ai.meta.com/llama/) by Meta |
-| Web Interface | [Streamlit](https://streamlit.io) |
-| Web Search | [DuckDuckGo](https://duckduckgo.com) (no API key needed) |
-| Weather Data | [wttr.in](https://wttr.in) (no API key needed) |
-| Knowledge Base | [Wikipedia](https://wikipedia.org) |
+| Agent framework | LangChain (ReAct) + langchain-classic |
+| LLM inference | [Groq](https://groq.com) — fastest inference available |
+| Language model | Llama 3.3 70B by Meta |
+| Web interface | Streamlit |
+| Search | DuckDuckGo (via ddgs) |
+| Weather | [wttr.in](https://wttr.in) |
+| Currency | [fawazahmed0 currency API](https://github.com/fawazahmed0/exchange-api) |
 
 ---
 
-## 🤝 Contributing
+## Things I learned building this
 
-Contributions are welcome! Ideas for extension:
-
-- 🐍 **Python REPL** — execute code snippets
-- 📧 **Email tool** — send/read emails
-- 🗄️ **Database tool** — query SQL databases
-- 🖼️ **Image generation** — DALL·E / Stable Diffusion
-- 🔔 **Memory** — persistent conversation history
-- 🌍 **Multi-language** — internationalization support
+- LangChain 1.x moved `AgentExecutor` to `langchain-classic` — the migration guide is sparse
+- Groq deprecated several models mid-development (llama3-70b-8192 is gone)
+- The ReAct prompt needs explicit "you can answer directly without a tool" instructions, otherwise the agent loops
+- DuckDuckGo changed its internal API and now requires the `ddgs` package separately
+- Streamlit hot-reload doesn't re-run `load_dotenv()` in the same process — restart required when `.env` changes
 
 ---
 
-## 📝 License
+## Contributing
 
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+Open to PRs. Ideas:
+- Streaming responses (challenging with AgentExecutor + Streamlit)
+- Persistent memory across sessions
+- Image generation tool
+- Email / calendar integration
 
 ---
 
 <div align="center">
 
-Made with ❤️ using Python, LangChain, and Groq
+Made by **Motawfeek** — [GitHub](https://github.com/Motawfeek)
 
-**⭐ Star this repo if you found it useful!**
+⭐ Star if useful!
 
 </div>

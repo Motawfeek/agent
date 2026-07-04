@@ -40,21 +40,17 @@ Question: {input}
 Thought:{agent_scratchpad}"""
 
 
-def create_agent_executor(api_key: str, model: str = "llama3-70b-8192") -> AgentExecutor:
-    """
-    Create and return a configured LangChain AgentExecutor.
-
-    Args:
-        api_key: Groq API key (get one free at console.groq.com)
-        model:   Groq model name
-
-    Returns:
-        AgentExecutor ready to process queries via .invoke({"input": "..."})
-    """
+def create_agent_executor(
+    api_key: str,
+    model: str = "llama-3.3-70b-versatile",
+    temperature: float = 0.7,
+    max_iterations: int = 7,
+) -> AgentExecutor:
+    """Build and return the AgentExecutor."""
     llm = ChatGroq(
         groq_api_key=api_key,
         model_name=model,
-        temperature=0.7,
+        temperature=temperature,
         max_tokens=2048,
     )
 
@@ -67,6 +63,6 @@ def create_agent_executor(api_key: str, model: str = "llama3-70b-8192") -> Agent
         tools=tools,
         verbose=True,
         handle_parsing_errors=True,
-        max_iterations=7,
+        max_iterations=max_iterations,
         return_intermediate_steps=True,
     )
